@@ -1,0 +1,5 @@
+{
+  "name": "AI Shot Director",
+  "description": "Upload an image and use AI to regenerate it from different camera angles, shots, and perspectives. A powerful tool for creative exploration and content creation.",
+  "requestFramePermissions": []
+}
