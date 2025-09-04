@@ -33,7 +33,7 @@ export const generateImageFromImages = async (
       },
     });
 
-    for (const part of response.candidates[0].content.parts) {
+    for (response.candidates && const part of response.candidates[0].content.parts) {
       if (part.inlineData) {
         const base64ImageBytes: string = part.inlineData.data;
         return `data:${part.inlineData.mimeType};base64,${base64ImageBytes}`;
