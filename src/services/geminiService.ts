@@ -20,11 +20,13 @@ export const generateImageFromImages = async (
   prompt: string
 ): Promise<string | null> => {
   try {
-    const imageParts = images.map(image => fileToGenerativePart(image.base64ImageData, image.mimeType));
+    const imageParts = images.map(image =>
+      fileToGenerativePart(image.base64ImageData, image.mimeType)
+    );
     const textPart = { text: prompt };
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image-preview',
+      model: "gemini-2.5-flash-image-preview",
       contents: {
         parts: [...imageParts, textPart],
       },
@@ -33,17 +35,23 @@ export const generateImageFromImages = async (
       },
     });
 
-    for (response.candidates && const part of response.candidates[0].content.parts) {
-      if (part.inlineData) {
-        const base64ImageBytes: string = part.inlineData.data;
-        return `data:${part.inlineData.mimeType};base64,${base64ImageBytes}`;
+    // ✅ candidates 존재 여부 확인
+    if (response.candidates && response.candidates.length > 0) {
+      const parts = response.candidates[0].content.parts;
+
+      for (const part of parts) {
+        if (part.inlineData) {
+          const base64ImageBytes: string = part.inlineData.data;
+          return `data:${part.inlineData.mimeType};base64,${base64ImageBytes}`;
+        }
       }
     }
+
     return null;
   } catch (error) {
     console.error("Error generating image:", error);
     if (error instanceof Error) {
-        throw new Error(`Failed to generate image: ${error.message}`);
+      throw new Error(`Failed to generate image: ${error.message}`);
     }
     throw new Error("An unknown error occurred during image generation.");
   }
