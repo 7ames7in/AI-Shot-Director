@@ -1,10 +1,12 @@
 import { GoogleGenAI, Modality, GenerateContentResponse } from "@google/genai";
 
-if (!process.env.API_KEY) {
+const apiKey = import.meta.env.VITE_API_KEY;
+
+if (!apiKey) {
   throw new Error("API_KEY environment variable is not set");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: apiKey });
 
 const fileToGenerativePart = (base64Data: string, mimeType: string) => {
   return {
