@@ -35,15 +35,27 @@ export const generateImageFromImages = async (
       },
     });
 
-    // ✅ candidates 존재 여부 확인
-    if (response.candidates && response.candidates.length > 0) {
-      const parts = response.candidates[0].content.parts;
+    // ✅ 단계별 null 체크
+    const candidates = response.candidates;
+    if (!candidates || candidates.length === 0) {
+      console.warn("No candidates returned from Gemini API");
+      return null;
+    }
 
-      for (const part of parts) {
-        if (part.inlineData) {
-          const base64ImageBytes: string = part.inlineData.data;
-          return `data:${part.inlineData.mimeType};base64,${base64ImageBytes}`;
-        }
+    const candidate = candidates[0];
+    const content = candidate.content;
+    const parts = content?.parts;
+
+    if (!parts || parts.length === 0) {
+      console.warn("No parts in candidate content");
+      return null;
+    }
+
+    for (const part of parts) {
+      if (part.inlineData && part.inlineData.data && part.inlineData.mimeType) {
+        const base64ImageBytes = part.inlineData.data; // inferred as string
+        const mimeType = part.inlineData.mimeType; // inferred as string
+        return `data:${mimeType};base64,${base64ImageBytes}`;
       }
     }
 
